@@ -1,0 +1,14 @@
+###
+
+###
+POST http://localhost:8080/api/events/network
+Content-Type: application/json
+
+{
+  "sensor": "ndr-01",
+  "src_ip": "192.168.1.10",
+  "dst_ip": "192.168.1.50",
+  "protocol": "TCP",
+  "alert_type": "port_scan",
+  "time_detected": "2026-03-23T10:16:00"
+}

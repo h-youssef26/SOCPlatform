@@ -1,40 +1,50 @@
 package com.soc.backend_core.model;
 
+import org.springframework.data.annotation.Id;
+import org.springframework.data.elasticsearch.annotations.Document;
+import org.springframework.data.elasticsearch.annotations.Field;
+import org.springframework.data.elasticsearch.annotations.FieldType;
+
 import java.time.Instant;
 import java.util.Map;
 
-public class UnifiedEvent {
+@Document(indexName = "soc-events")
+public class EventDocument {
 
+    @Id
     private String eventId;
+
+    @Field(type = FieldType.Keyword)
     private String deviceId;
+
+    @Field(type = FieldType.Keyword)
     private String eventType;
+
+    @Field(type = FieldType.Keyword)
     private String sourceIp;
+
+    @Field(type = FieldType.Keyword)
     private String destinationIp;
+
+    @Field(type = FieldType.Keyword)
     private String process;
+
+    @Field(type = FieldType.Keyword)
     private String user;
+
+    @Field(type = FieldType.Keyword)
     private String severity;
+
+    @Field(type = FieldType.Keyword)
     private String source;
+
+    @Field(type = FieldType.Date)
     private Instant timestamp;
+
+    @Field(type = FieldType.Object)
     private Map<String, Object> raw;
 
-    public UnifiedEvent() {}
-
-    public UnifiedEvent(String eventId, String deviceId, String eventType,
-                        String sourceIp, String destinationIp, String process,
-                        String user, String severity, String source,
-                        Instant timestamp, Map<String, Object> raw) {
-        this.eventId = eventId;
-        this.deviceId = deviceId;
-        this.eventType = eventType;
-        this.sourceIp = sourceIp;
-        this.destinationIp = destinationIp;
-        this.process = process;
-        this.user = user;
-        this.severity = severity;
-        this.source = source;
-        this.timestamp = timestamp;
-        this.raw = raw;
-    }
+    public EventDocument() {}
 
     public static Builder builder() { return new Builder(); }
 
@@ -75,9 +85,14 @@ public class UnifiedEvent {
         public Builder timestamp(Instant v) { this.timestamp = v; return this; }
         public Builder raw(Map<String, Object> v) { this.raw = v; return this; }
 
-        public UnifiedEvent build() {
-            return new UnifiedEvent(eventId, deviceId, eventType, sourceIp,
-                    destinationIp, process, user, severity, source, timestamp, raw);
+        public EventDocument build() {
+            EventDocument d = new EventDocument();
+            d.eventId = eventId; d.deviceId = deviceId;
+            d.eventType = eventType; d.sourceIp = sourceIp;
+            d.destinationIp = destinationIp; d.process = process;
+            d.user = user; d.severity = severity;
+            d.source = source; d.timestamp = timestamp; d.raw = raw;
+            return d;
         }
     }
 }

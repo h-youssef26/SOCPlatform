@@ -1,40 +1,38 @@
 package com.soc.backend_core.model;
 
+import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.Map;
 
-public class UnifiedEvent {
+@Entity
+@Table(name = "events")
+public class EventRecord {
 
+    @Id
     private String eventId;
+
+    @Column(nullable = false)
     private String deviceId;
+
+    @Column(nullable = false)
     private String eventType;
+
     private String sourceIp;
     private String destinationIp;
     private String process;
+
+    @Column(name = "username")
     private String user;
+
+    @Column(nullable = false)
     private String severity;
+
+    @Column(nullable = false)
     private String source;
+
+    @Column(nullable = false)
     private Instant timestamp;
-    private Map<String, Object> raw;
 
-    public UnifiedEvent() {}
-
-    public UnifiedEvent(String eventId, String deviceId, String eventType,
-                        String sourceIp, String destinationIp, String process,
-                        String user, String severity, String source,
-                        Instant timestamp, Map<String, Object> raw) {
-        this.eventId = eventId;
-        this.deviceId = deviceId;
-        this.eventType = eventType;
-        this.sourceIp = sourceIp;
-        this.destinationIp = destinationIp;
-        this.process = process;
-        this.user = user;
-        this.severity = severity;
-        this.source = source;
-        this.timestamp = timestamp;
-        this.raw = raw;
-    }
+    public EventRecord() {}
 
     public static Builder builder() { return new Builder(); }
 
@@ -48,20 +46,11 @@ public class UnifiedEvent {
     public String getSeverity() { return severity; }
     public String getSource() { return source; }
     public Instant getTimestamp() { return timestamp; }
-    public Map<String, Object> getRaw() { return raw; }
 
     public static class Builder {
-        private String eventId;
-        private String deviceId;
-        private String eventType;
-        private String sourceIp;
-        private String destinationIp;
-        private String process;
-        private String user;
-        private String severity;
-        private String source;
+        private String eventId, deviceId, eventType, sourceIp;
+        private String destinationIp, process, user, severity, source;
         private Instant timestamp;
-        private Map<String, Object> raw;
 
         public Builder eventId(String v) { this.eventId = v; return this; }
         public Builder deviceId(String v) { this.deviceId = v; return this; }
@@ -73,11 +62,15 @@ public class UnifiedEvent {
         public Builder severity(String v) { this.severity = v; return this; }
         public Builder source(String v) { this.source = v; return this; }
         public Builder timestamp(Instant v) { this.timestamp = v; return this; }
-        public Builder raw(Map<String, Object> v) { this.raw = v; return this; }
 
-        public UnifiedEvent build() {
-            return new UnifiedEvent(eventId, deviceId, eventType, sourceIp,
-                    destinationIp, process, user, severity, source, timestamp, raw);
+        public EventRecord build() {
+            EventRecord r = new EventRecord();
+            r.eventId = eventId; r.deviceId = deviceId;
+            r.eventType = eventType; r.sourceIp = sourceIp;
+            r.destinationIp = destinationIp; r.process = process;
+            r.user = user; r.severity = severity;
+            r.source = source; r.timestamp = timestamp;
+            return r;
         }
     }
 }

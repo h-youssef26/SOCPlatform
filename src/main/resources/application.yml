@@ -2,6 +2,7 @@ spring:
   application:
     name: backend-core
 
+  # Kafka Configuration
   kafka:
     bootstrap-servers: localhost:9092
     producer:
@@ -9,6 +10,34 @@ spring:
       value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
       properties:
         spring.json.add.type.headers: false
+    consumer:
+      group-id: soc-backend
+      auto-offset-reset: earliest
+      key-deserializer: org.apache.kafka.common.serialization.StringDeserializer
+      value-deserializer: org.springframework.kafka.support.serializer.JsonDeserializer
+      properties:
+        spring.json.trusted.packages: "*"
+        spring.json.value.default.type: com.soc.backend_core.model.UnifiedEvent
+
+  # Elasticsearch Configuration
+  elasticsearch:
+    uris: http://localhost:9200
+
+  # PostgreSQL Configuration
+  datasource:
+    url: jdbc:postgresql://localhost:5432/socdb
+    username: socuser
+    password: socpassword
+    driver-class-name: org.postgresql.Driver
+
+  # JPA Configuration
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
 
 server:
   port: 8080
@@ -16,3 +45,4 @@ server:
 logging:
   level:
     org.apache.kafka: WARN
+    org.elasticsearch: WARN

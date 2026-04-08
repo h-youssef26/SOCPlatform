@@ -16,4 +16,9 @@ public class NetworkEventRequest {
     private String srcIp;
     private String destIp;
     private Map<String, Object> raw;
+    public String getDeviceId() { return deviceId; }
+public String getEventType() { return eventType; }
+public String getSrcIp() { return srcIp; }
+public String getDestIp() { return destIp; }
+public java.util.Map<String, Object> getRaw() { return raw; }
 }

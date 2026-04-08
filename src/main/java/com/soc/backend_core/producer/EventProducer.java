@@ -5,12 +5,14 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventProducer {
-
+    private static final Logger log = LoggerFactory.getLogger(EventProducer.class);
     private final KafkaTemplate<String, UnifiedEvent> kafkaTemplate;
 
     public void sendNetworkEvent(UnifiedEvent event) {

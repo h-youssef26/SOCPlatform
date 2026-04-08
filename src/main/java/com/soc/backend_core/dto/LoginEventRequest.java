@@ -14,4 +14,8 @@ public class LoginEventRequest {
 
     private String sourceIp;
     private boolean failed;
+    public String getDeviceId() { return deviceId; }
+    public String getUser() { return user; }
+    public String getSourceIp() { return sourceIp; }
+    public boolean isFailed() { return failed; }
 }

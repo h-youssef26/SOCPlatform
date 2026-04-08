@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>SOC WebSocket Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/sockjs-client/1.5.1/sockjs.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/stomp.js/2.3.3/stomp.min.js"></script>
+    <style>
+        body { font-family: Arial; padding: 20px; background: #1a1a2e; color: #eee; }
+        h2 { color: #00d4ff; }
+        #alerts { background: #16213e; padding: 15px; border-radius: 8px; min-height: 200px; }
+        .alert { padding: 10px; margin: 5px 0; border-left: 4px solid #00d4ff; background: #0f3460; border-radius: 4px; }
+        .HIGH { border-left-color: #ff4444; }
+        .CRITICAL { border-left-color: #ff0000; }
+        .LOW { border-left-color: #44ff44; }
+        button { background: #00d4ff; color: #000; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; margin: 5px; }
+        #status { color: #44ff44; font-weight: bold; }
+    </style>
+</head>
+<body>
+    <h2>🛡️ NetSpect SOC — Live Alerts</h2>
+    <p>Status: <span id="status">Connecting...</span></p>
+
+    <button onclick="sendPing()">Send Ping</button>
+    <button onclick="clearAlerts()">Clear Alerts</button>
+
+    <h3>Live Alerts:</h3>
+    <div id="alerts"></div>
+
+    <script>
+        var stompClient = null;
+
+        function connect() {
+            var socket = new SockJS('/ws/alerts');
+            stompClient = Stomp.over(socket);
+            stompClient.debug = null;
+
+            stompClient.connect({}, function(frame) {
+                document.getElementById('status').innerText = 'Connected ';
+
+                stompClient.subscribe('/topic/alerts', function(message) {
+                    var alert = JSON.parse(message.body);
+                    showAlert(alert);
+                });
+            }, function(error) {
+                document.getElementById('status').innerText = 'Disconnected ❌';
+                setTimeout(connect, 5000);
+            });
+        }
+
+        function showAlert(alert) {
+            var div = document.getElementById('alerts');
+            var item = document.createElement('div');
+            item.className = 'alert ' + alert.severity;
+            item.innerHTML =
+                '<strong>[' + alert.severity + '] ' + alert.type + '</strong><br>' +
+                ' Device: ' + alert.deviceId + '<br>' +
+                ' ' + alert.message + '<br>' +
+                ' ' + new Date(alert.timestamp).toLocaleTimeString();
+            div.insertBefore(item, div.firstChild);
+        }
+
+        function sendPing() {
+            if (stompClient) {
+                stompClient.send("/app/ping", {}, {});
+            }
+        }
+
+        function clearAlerts() {
+            document.getElementById('alerts').innerHTML = '';
+        }
+
+        connect();
+    </script>
+</body>
+</html>

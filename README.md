@@ -198,14 +198,7 @@ autonomous-soc-platform/
 │           ├── application.yml
 │           └── static/
 │               └── test.html
-│
-├── detection-engine/         ⏳ Coming in Sprint 4
-├── network-sensor/           ⏳ Coming in Sprint 2
-├── endpoint-agent/           ⏳ Coming in Sprint 3
-├── dashboard/                ⏳ Coming in Sprint 6
-├── infrastructure/
-│   └── docker-compose.yml
-└── simulation-lab/           ⏳ Coming soon
+
 ```
 
 ---
@@ -333,10 +326,3 @@ http://localhost:8080/test.html
 | Sprint 1 | Event Ingestion API | Eman | ✅ Done |
 | Sprint 2 | Storage & Query Layer | Eman | ✅ Done |
 | Sprint 3 | SOAR + WebSocket | Eman | ✅ Done |
-| Sprint 4 | Detection Engine | Detection Team | ⏳ In Progress |
-| Sprint 5 | Network Sensor (Suricata) | NDR Team | ⏳ In Progress |
-| Sprint 6 | Endpoint Agent (Python) | EDR Team | ⏳ In Progress |
-| Sprint 7 | Dashboard (React) | Frontend Team | ⏳ Waiting |
-
-
-

@@ -111,6 +111,15 @@
 			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<failOnError>true</failOnError>
+					<failOnWarnings>false</failOnWarnings>
+					<doclint>none</doclint>  <!-- disables HTML/missing-comment checks -->
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<executions>
 					<execution>

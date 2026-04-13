@@ -14,6 +14,13 @@ import org.springframework.web.bind.annotation.*;
 import java.time.Instant;
 import java.util.UUID;
 
+
+/**
+ * REST controller that receives security events
+ * and publishes them to Kafka for processing.
+ */
+
+
 @Slf4j
 @RestController
 @RequestMapping("/api/events")
@@ -21,6 +28,13 @@ import java.util.UUID;
 public class EventController {
 
     private final EventProducer producer;
+
+    /**
+     * Receives network security events and sends them to Kafka.
+     *
+     * @param request network event payload
+     * @return confirmation message
+     */
 
     @PostMapping("/network")
     public ResponseEntity<String> receiveNetworkEvent(
@@ -42,6 +56,14 @@ public class EventController {
         return ResponseEntity.ok("Network event accepted");
     }
 
+    /**
+     * Receives endpoint security event and publishes it to Kafka.
+     *
+     * @param request endpoint event payload
+     * @return confirmation message
+     */
+
+
     @PostMapping("/endpoint")
     public ResponseEntity<String> receiveEndpointEvent(
             @RequestBody @Valid EndpointEventRequest request) {
@@ -61,6 +83,13 @@ public class EventController {
         producer.sendEndpointEvent(event);
         return ResponseEntity.ok("Endpoint event accepted");
     }
+
+    /**
+     * Receives login event, detects severity, and sends it to Kafka.
+     *
+     * @param request login event payload
+     * @return confirmation message
+     */
 
     @PostMapping("/login")
     public ResponseEntity<String> receiveLoginEvent(

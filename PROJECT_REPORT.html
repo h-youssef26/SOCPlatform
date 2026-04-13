@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>NetSpect Backend Core - Project Report</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            margin: 2cm;
+            color: #333;
+        }
+        h1, h2, h3, h4, h5, h6 {
+            color: #0066cc;
+            margin-top: 1.5em;
+            margin-bottom: 0.5em;
+        }
+        h1 {
+            font-size: 2.5em;
+            border-bottom: 3px solid #0066cc;
+            padding-bottom: 0.3em;
+        }
+        h2 {
+            font-size: 1.8em;
+            border-bottom: 2px solid #0099ff;
+            padding-bottom: 0.2em;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin: 1em 0;
+        }
+        table th {
+            background-color: #0066cc;
+            color: white;
+            padding: 0.8em;
+            text-align: left;
+        }
+        table td {
+            border: 1px solid #ddd;
+            padding: 0.8em;
+        }
+        table tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        pre {
+            background-color: #f4f4f4;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 1em;
+            overflow-x: auto;
+        }
+        code {
+            background-color: #f4f4f4;
+            padding: 0.2em 0.4em;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+        }
+        ul, ol {
+            margin: 0.5em 0;
+            padding-left: 2em;
+        }
+        li {
+            margin: 0.3em 0;
+        }
+        blockquote {
+            border-left: 4px solid #0066cc;
+            margin: 1em 0;
+            padding-left: 1em;
+            color: #666;
+        }
+        a {
+            color: #0066cc;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        page-break {
+            page-break-after: always;
+        }
+    </style>
+</head>
+<body>
+<h1>NetSpect Backend Core - Project Report</h1>
+
+<h2>Project Overview</h2>
+
+<p><strong>NetSpect</strong> is a Spring Boot-based backend engine designed for Security Operations Centers (SOC). It provides real-time event processing, storage, and automated threat response capabilities. The system ingests security events from various sources, processes them through Kafka streams, stores them in Elasticsearch for search and PostgreSQL for persistence, and delivers real-time alerts via WebSocket to dashboards.</p>
+
+<h2>Key Features</h2>
+
+<ul>
+<li><strong>Event Streaming</strong>: Kafka-based event ingestion from agents and SIEM systems</li>
+<li><strong>Multi-Storage</strong>: Dual storage in Elasticsearch (search/analytics) and PostgreSQL (persistence/audit)</li>
+<li><strong>Real-time Alerts</strong>: WebSocket push notifications to live dashboards</li>
+<li><strong>SOAR Integration</strong>: Automated threat response and command execution</li>
+<li><strong>RESTful APIs</strong>: Query and management endpoints</li>
+<li><strong>Event Types</strong>: Support for Login, Network, and Endpoint security events</li>
+</ul>
+
+<h2>Technology Stack</h2>
+
+<table>
+<thead>
+<tr>
+  <th>Component</th>
+  <th>Technology</th>
+  <th>Version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+  <td>Framework</td>
+  <td>Spring Boot</td>
+  <td>3.5.13</td>
+</tr>
+<tr>
+  <td>Language</td>
+  <td>Java</td>
+  <td>17</td>
+</tr>
+<tr>
+  <td>Build Tool</td>
+  <td>Maven</td>
+  <td>3.x (via wrapper)</td>
+</tr>
+<tr>
+  <td>Message Broker</td>
+  <td>Apache Kafka</td>
+  <td>3.7</td>
+</tr>
+<tr>
+  <td>Search Engine</td>
+  <td>Elasticsearch</td>
+  <td>8.x</td>
+</tr>
+<tr>
+  <td>Database</td>
+  <td>PostgreSQL</td>
+  <td>16</td>
+</tr>
+<tr>
+  <td>Real-time</td>
+  <td>Spring WebSocket (STOMP)</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td>HTTP Client</td>
+  <td>Spring WebFlux (WebClient)</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td>Testing</td>
+  <td>JUnit, Spring Boot Test</td>
+  <td>-</td>
+</tr>
+<tr>
+  <td>Documentation</td>
+  <td>Maven Site Plugin</td>
+  <td>-</td>
+</tr>
+</tbody>
+</table>
+
+<h2>Architecture</h2>
+
+<p>The application follows a layered architecture with clear separation of concerns:</p>
+
+<h3>Data Flow</h3>
+
+<ol>
+<li><strong>Ingestion</strong>: Events arrive via Kafka topics (<code>events.network</code>, <code>events.endpoint</code>, <code>events.alerts</code>)</li>
+<li><strong>Processing</strong>: EventConsumer processes incoming messages</li>
+<li><strong>Storage</strong>: EventStorageService writes to both Elasticsearch and PostgreSQL</li>
+<li><strong>Analysis</strong>: EventQueryService provides search and analytics</li>
+<li><strong>Response</strong>: SoarService executes automated responses</li>
+<li><strong>Notification</strong>: WebSocketController pushes real-time alerts</li>
+</ol>
+
+<h3>Component Diagram</h3>
+
+<pre><code>[Agents/SIEM] → [Kafka] → [EventConsumer] → [EventStorageService]
+                                      ↓
+[WebSocketController] ← [SoarService] ← [EventQueryService]
+                                      ↑
+                            [PostgreSQL] &amp; [Elasticsearch]
+</code></pre>
+
+<h2>Code Structure</h2>
+
+<h3>Main Packages</h3>
+
+<ul>
+<li><code>com.soc.backend_core</code>: Main application and configuration</li>
+<li><code>com.soc.backend_core.controller</code>: REST controllers and WebSocket handlers</li>
+<li><code>com.soc.backend_core.service</code>: Business logic services</li>
+<li><code>com.soc.backend_core.consumer</code>: Kafka message consumers</li>
+<li><code>com.soc.backend_core.producer</code>: Kafka message producers</li>
+<li><code>com.soc.backend_core.repository</code>: Data access layers (JPA and Elasticsearch)</li>
+<li><code>com.soc.backend_core.Entities</code>: Domain models and entities</li>
+<li><code>com.soc.backend_core.dto</code>: Data transfer objects</li>
+</ul>
+
+<h3>Key Classes</h3>
+
+<h4>Configuration</h4>
+
+<ul>
+<li><code>BackendCoreApplication</code>: Main Spring Boot application class</li>
+<li><code>KafkaConfig</code>: Kafka producer/consumer and topic configuration</li>
+<li><code>WebSocketConfig</code>: STOMP WebSocket message broker setup</li>
+</ul>
+
+<h4>Controllers</h4>
+
+<ul>
+<li><code>EventController</code>: REST endpoints for event management</li>
+<li><code>EventQueryController</code>: Search and query APIs</li>
+<li><code>SoarController</code>: SOAR command endpoints</li>
+<li><code>WebSocketController</code>: WebSocket message handling</li>
+</ul>
+
+<h4>Services</h4>
+
+<ul>
+<li><code>EventStorageService</code>: Handles data persistence to both stores</li>
+<li><code>EventQueryService</code>: Provides search and analytics functionality</li>
+<li><code>SoarService</code>: Manages automated threat responses</li>
+</ul>
+
+<h4>Entities</h4>
+
+<ul>
+<li><code>UnifiedEvent</code>: Core event domain model</li>
+<li><code>AlertMessage</code>: Alert notification model</li>
+<li><code>SoarCommand</code>: Automated response command model</li>
+<li><code>EventRecord</code>: JPA entity for PostgreSQL</li>
+<li><code>EventDocument</code>: Elasticsearch document model</li>
+</ul>
+
+<h4>DTOs</h4>
+
+<ul>
+<li><code>LoginEventRequest</code>: Login event data</li>
+<li><code>NetworkEventRequest</code>: Network event data</li>
+<li><code>EndpointEventRequest</code>: Endpoint event data</li>
+<li><code>SoarCommandRequest</code>: SOAR command data</li>
+</ul>
+
+<h2>Dependencies</h2>
+
+<h3>Core Dependencies</h3>
+
+<ul>
+<li>Spring Boot Starters: web, validation, data-jpa, data-elasticsearch, websocket, webflux</li>
+<li>Spring Kafka: kafka, kafka-test</li>
+<li>Database: postgresql</li>
+<li>JSON Processing: jackson-datatype-jsr310</li>
+<li>Utilities: lombok</li>
+</ul>
+
+<h3>Test Dependencies</h3>
+
+<ul>
+<li>spring-boot-starter-test</li>
+<li>spring-kafka-test</li>
+</ul>
+
+<h2>Build Configuration</h2>
+
+<h3>Maven Plugins</h3>
+
+<ul>
+<li><code>spring-boot-maven-plugin</code>: Boot application packaging</li>
+<li><code>maven-compiler-plugin</code>: Java compilation with Lombok annotation processing</li>
+<li><code>maven-javadoc-plugin</code>: Documentation generation</li>
+</ul>
+
+<h3>Java Version</h3>
+
+<ul>
+<li>Source/Target: Java 17</li>
+<li>Annotation Processing: Lombok enabled</li>
+</ul>
+
+<h2>Configuration</h2>
+
+<h3>Application Properties</h3>
+
+<p>Located in <code>src/main/resources/application.yml</code></p>
+
+<p>Key configurations include:
+- Kafka broker settings
+- Elasticsearch cluster configuration
+- PostgreSQL database connection
+- WebSocket endpoint settings
+- Logging levels</p>
+
+<h2>Testing</h2>
+
+<h3>Test Structure</h3>
+
+<ul>
+<li><code>BackendCoreApplicationTests</code>: Main application context test</li>
+<li>Integration tests for Kafka consumers/producers</li>
+<li>Unit tests for services and utilities</li>
+</ul>
+
+<h3>Test Execution</h3>
+
+<pre><code>./mvnw test
+</code></pre>
+
+<h2>Deployment</h2>
+
+<h3>Local Development</h3>
+
+<ol>
+<li>Ensure Java 17+ is installed</li>
+<li>Start required services (Kafka, Elasticsearch, PostgreSQL)</li>
+<li>Run <code>./mvnw spring-boot:run</code></li>
+</ol>
+
+<h3>Production Build</h3>
+
+<pre><code>./mvnw clean package
+java -jar target/backend-core-0.0.1-SNAPSHOT.jar
+</code></pre>
+
+<h3>Docker Support</h3>
+
+<p>Docker Compose configuration available for local development environment.</p>
+
+<h2>API Endpoints</h2>
+
+<h3>REST APIs</h3>
+
+<ul>
+<li><code>GET /api/events</code>: Query events with filters</li>
+<li><code>POST /api/events</code>: Create new events</li>
+<li><code>GET /api/events/{id}</code>: Get specific event</li>
+<li><code>POST /api/soar/commands</code>: Execute SOAR commands</li>
+</ul>
+
+<h3>WebSocket</h3>
+
+<ul>
+<li>Endpoint: <code>/ws/alerts</code></li>
+<li>Subscribe: <code>/topic/alerts</code> for real-time alerts</li>
+<li>Send: <code>/app/alert</code> to broadcast alerts</li>
+</ul>
+
+<h2>Security Considerations</h2>
+
+<ul>
+<li>CORS configuration for WebSocket endpoints</li>
+<li>Input validation using Bean Validation</li>
+<li>Secure communication protocols (HTTPS, WSS)</li>
+<li>Audit trail in PostgreSQL</li>
+<li>Role-based access control (to be implemented)</li>
+</ul>
+
+<h2>Performance Characteristics</h2>
+
+<ul>
+<li>Sub-second latency for event processing via Kafka</li>
+<li>Scalable storage with Elasticsearch for search</li>
+<li>Real-time WebSocket push notifications</li>
+<li>Concurrent Kafka listeners for high throughput</li>
+</ul>
+
+<h2>Future Enhancements</h2>
+
+<ul>
+<li>Authentication and authorization</li>
+<li>Event correlation and pattern detection</li>
+<li>Advanced SOAR workflows</li>
+<li>Metrics and monitoring integration</li>
+<li>Multi-tenancy support</li>
+<li>API rate limiting and throttling</li>
+</ul>
+
+<h2>Development Notes</h2>
+
+<ul>
+<li>Uses Lombok for boilerplate reduction</li>
+<li>Follows Spring Boot conventions</li>
+<li>Maven wrapper for consistent builds</li>
+<li>Javadoc generation enabled</li>
+<li>Test coverage to be expanded</li>
+</ul>
+
+<h2>Conclusion</h2>
+
+<p>NetSpect Backend Core provides a solid foundation for SOC operations with modern technologies and scalable architecture. The modular design allows for easy extension and customization based on specific security requirements.</p>
+
+</body>
+</html>

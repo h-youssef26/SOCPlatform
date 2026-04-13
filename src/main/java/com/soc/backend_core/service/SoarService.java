@@ -14,6 +14,13 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
+
+/**
+ * SOAR service responsible for executing security automation actions
+ * such as killing processes, blocking IPs, and isolating hosts.
+ * Also sends real-time alerts to dashboard via WebSocket.
+ */
+
 @Service
 public class SoarService {
 
@@ -32,6 +39,10 @@ public class SoarService {
     }
 
     // ─── Kill Process ────────────────────────────────────────────
+    /**
+     * Executes process termination command on target device
+     * and sends alert to dashboard.
+     */
 
     public SoarCommand killProcess(String deviceId,
                                    String targetProcess,
@@ -65,6 +76,10 @@ public class SoarService {
     }
 
     // ─── Block IP ────────────────────────────────────────────────
+    /**
+     * Blocks an IP address on target device
+     * and sends alert to dashboard.
+     */
 
     public SoarCommand blockIp(String deviceId,
                                String targetIp,
@@ -98,6 +113,9 @@ public class SoarService {
     }
 
     // ─── Isolate Host ─────────────────────────────────────────────
+    /**
+     * Isolates a host from network and triggers alert notification.
+     */
 
     public SoarCommand isolateHost(String deviceId,
                                    String triggeredBy) {
@@ -128,12 +146,20 @@ public class SoarService {
     }
 
     // ─── Get All Commands ─────────────────────────────────────────
+    /**
+     * Returns all executed SOAR commands stored in memory.
+     */
 
     public List<SoarCommand> getAllCommands() {
         return new ArrayList<>(commandStore.values());
     }
 
     // ─── Push Alert to Dashboard ──────────────────────────────────
+    /**
+     * Sends real-time alert message to WebSocket dashboard.
+     *
+     * @param alert alert message
+     */
 
     public void pushAlertToDashboard(AlertMessage alert) {
         log.info("Pushing alert to Dashboard: {}", alert.getMessage());

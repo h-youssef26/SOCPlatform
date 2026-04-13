@@ -13,6 +13,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+
+/**
+ * REST controller that handles incoming security events
+ * and routes them to Kafka for processing in the SOC pipeline.
+ */
+
 @RestController
 @RequestMapping("/api/soar")
 @Slf4j
@@ -23,6 +29,13 @@ public class SoarController {
     public SoarController(SoarService soarService) {
         this.soarService = soarService;
     }
+
+    /**
+     * Sends a command to terminate a process on a target device.
+     *
+     * @param request SOAR command request payload
+     * @return created SOAR command
+     */
 
     // ─── Kill Process ─────────────────────────────────────────────
 
@@ -44,6 +57,13 @@ public class SoarController {
 
     // ─── Block IP ─────────────────────────────────────────────────
 
+    /**
+     * Sends a command to block an IP address on a target device.
+     *
+     * @param request SOAR command request payload
+     * @return created SOAR command
+     */
+
     @PostMapping("/block-ip")
     public ResponseEntity<SoarCommand> blockIp(
             @RequestBody SoarCommandRequest request) {
@@ -61,6 +81,12 @@ public class SoarController {
     }
 
     // ─── Isolate Host ─────────────────────────────────────────────
+    /**
+     * Isolates a device from the network for security containment.
+     *
+     * @param request SOAR command request payload
+     * @return created SOAR command
+     */
 
     @PostMapping("/isolate")
     public ResponseEntity<SoarCommand> isolateHost(
@@ -79,12 +105,21 @@ public class SoarController {
 
     // ─── Get All Commands ─────────────────────────────────────────
 
+    /**
+     * Retrieves all executed SOAR commands stored in memory.
+     */
+
     @GetMapping("/commands")
     public ResponseEntity<List<SoarCommand>> getAllCommands() {
         return ResponseEntity.ok(soarService.getAllCommands());
     }
 
     // ─── Manual Alert Push (for testing) ─────────────────────────
+    /**
+     * Sends a test alert to the WebSocket dashboard.
+     *
+     * Used for verifying real-time alert system.
+     */
 
     @PostMapping("/test-alert")
     public ResponseEntity<String> testAlert() {
@@ -105,6 +140,10 @@ public class SoarController {
     }
 
     // ─── Stats ────────────────────────────────────────────────────
+    /**
+     * Returns statistics about executed SOAR commands.
+     * Includes counts for kill, block, and isolate actions.
+     */
 
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStats() {

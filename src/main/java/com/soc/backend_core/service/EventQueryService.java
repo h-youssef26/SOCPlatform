@@ -11,6 +11,12 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.List;
 
+
+/**
+ * Provides query APIs for retrieving stored security events
+ * from Elasticsearch and PostgreSQL.
+ */
+
 @Service
 public class EventQueryService {
 
@@ -25,27 +31,53 @@ public class EventQueryService {
         this.postgresRepo = postgresRepo;
     }
 
+
+    /**
+     * Retrieves all events from Elasticsearch.
+     */
+
     public List<EventDocument> getAllEvents() {
         List<EventDocument> results = new ArrayList<>();
         elasticsearchRepo.findAll().forEach(results::add);
         return results;
     }
 
+    /**
+     * Retrieves events filtered by device ID.
+     */
+
     public List<EventDocument> getEventsByDevice(String deviceId) {
         return elasticsearchRepo.findByDeviceId(deviceId);
     }
+
+
+    /**
+     * Retrieves events filtered by severity level.
+     */
 
     public List<EventDocument> getEventsBySeverity(String severity) {
         return elasticsearchRepo.findBySeverity(severity);
     }
 
+    /**
+     * Retrieves events filtered by source system.
+     */
+
     public List<EventDocument> getEventsBySource(String source) {
         return elasticsearchRepo.findBySource(source);
     }
 
+    /**
+     * Retrieves events filtered by event type.
+     */
+
     public List<EventDocument> getEventsByType(String eventType) {
         return elasticsearchRepo.findByEventType(eventType);
     }
+
+    /**
+     * Returns total number of stored events in PostgreSQL.
+     */
 
     public long getTotalEventCount() {
         return postgresRepo.count();

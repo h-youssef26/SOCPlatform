@@ -10,6 +10,13 @@ import org.springframework.stereotype.Controller;
 import java.time.Instant;
 import java.util.UUID;
 
+
+/**
+ * REST controller that handles incoming security events
+ * and routes them to Kafka for processing in the SOC pipeline.
+ */
+
+
 @Controller
 @Slf4j
 public class WebSocketController {
@@ -21,6 +28,13 @@ public class WebSocketController {
     public WebSocketController(SoarService soarService) {
         this.soarService = soarService;
     }
+
+
+    /**
+     * Handles dashboard ping requests and returns system status alert.
+     *
+     * @return system status alert message
+     */
 
     // Dashboard sends a ping → server replies with current status
     @MessageMapping("/ping")

@@ -9,6 +9,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
+
+/**
+ * Stores incoming security events into:
+ * - Elasticsearch (for search and analytics)
+ * - PostgreSQL (for persistent storage)
+ */
+
 @Slf4j
 @Service
 @RequiredArgsConstructor
@@ -16,6 +23,12 @@ public class EventStorageService {
 
     private final EventDocumentRepository elasticsearchRepo;
     private final EventRecordRepository postgresRepo;
+
+    /**
+     * Stores incoming event into both Elasticsearch and PostgreSQL.
+     *
+     * @param event unified security event
+     */
 
     public void storeEvent(UnifiedEvent event) {
         if (event == null) {
@@ -27,6 +40,12 @@ public class EventStorageService {
         saveToElasticsearch(event);
         saveToPostgres(event);
     }
+
+    /**
+     * Saves event into Elasticsearch for fast searching and analytics.
+     *
+     * @param event unified security event
+     */
 
     private void saveToElasticsearch(UnifiedEvent event) {
         try {
@@ -51,6 +70,13 @@ public class EventStorageService {
             log.error("Failed to save to Elasticsearch", e);
         }
     }
+
+
+    /**
+     * Saves event into PostgreSQL for persistent storage.
+     *
+     * @param event unified security event
+     */
 
     private void saveToPostgres(UnifiedEvent event) {
         try {

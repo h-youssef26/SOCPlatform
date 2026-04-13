@@ -4,8 +4,7 @@ import com.soc.backend_core.dto.SoarCommandRequest;
 import com.soc.backend_core.model.AlertMessage;
 import com.soc.backend_core.model.SoarCommand;
 import com.soc.backend_core.service.SoarService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,10 +15,8 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/soar")
+@Slf4j
 public class SoarController {
-
-    private static final Logger log =
-            LoggerFactory.getLogger(SoarController.class);
 
     private final SoarService soarService;
 

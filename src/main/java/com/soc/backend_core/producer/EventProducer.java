@@ -12,7 +12,7 @@ import org.slf4j.LoggerFactory;
 @Service
 @RequiredArgsConstructor
 public class EventProducer {
-    private static final Logger log = LoggerFactory.getLogger(EventProducer.class);
+    
     private final KafkaTemplate<String, UnifiedEvent> kafkaTemplate;
 
     public void sendNetworkEvent(UnifiedEvent event) {

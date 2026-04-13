@@ -8,18 +8,22 @@ import com.soc.backend_core.repository.EventRecordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
 public class EventStorageService {
-    private static final Logger log = LoggerFactory.getLogger(EventStorageService.class);
+
     private final EventDocumentRepository elasticsearchRepo;
     private final EventRecordRepository postgresRepo;
 
     public void storeEvent(UnifiedEvent event) {
+        if (event == null) {
+            log.error("storeEvent called with null event");
+            return;
+        }
+
+        log.info("Storing event: {}", event.getEventId());
         saveToElasticsearch(event);
         saveToPostgres(event);
     }
@@ -44,7 +48,7 @@ public class EventStorageService {
             log.info("Event saved to Elasticsearch: {}", event.getEventId());
 
         } catch (Exception e) {
-            log.error("Failed to save to Elasticsearch: {}", e.getMessage());
+            log.error("Failed to save to Elasticsearch", e);
         }
     }
 
@@ -67,7 +71,7 @@ public class EventStorageService {
             log.info("Event saved to PostgreSQL: {}", event.getEventId());
 
         } catch (Exception e) {
-            log.error("Failed to save to PostgreSQL: {}", e.getMessage());
+            log.error("Failed to save to PostgreSQL", e);
         }
     }
 }

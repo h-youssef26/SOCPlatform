@@ -25,15 +25,15 @@ spring:
 
   # PostgreSQL Configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/socdb
-    username: socuser
-    password: socpassword
+    url: jdbc:postgresql://localhost:5432/soc_db
+    username: soc
+    password: soc123
     driver-class-name: org.postgresql.Driver
 
   # JPA Configuration
   jpa:
     hibernate:
-      ddl-auto: validate
+      ddl-auto: create-drop
     show-sql: false
     properties:
       hibernate:

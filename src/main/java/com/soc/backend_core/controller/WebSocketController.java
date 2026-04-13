@@ -2,8 +2,7 @@ package com.soc.backend_core.controller;
 
 import com.soc.backend_core.model.AlertMessage;
 import com.soc.backend_core.service.SoarService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
@@ -12,10 +11,10 @@ import java.time.Instant;
 import java.util.UUID;
 
 @Controller
+@Slf4j
 public class WebSocketController {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(WebSocketController.class);
+    
 
     private final SoarService soarService;
 

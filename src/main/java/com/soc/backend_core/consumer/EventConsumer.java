@@ -6,14 +6,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.annotation.KafkaListener;
 import org.springframework.stereotype.Component;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class EventConsumer {
-    private static final Logger log = LoggerFactory.getLogger(EventConsumer.class);
+
     private final EventStorageService storageService;
 
     @KafkaListener(
@@ -21,6 +19,11 @@ public class EventConsumer {
         groupId = "soc-backend"
     )
     public void consumeNetworkEvent(UnifiedEvent event) {
+        if (event == null) {
+            log.error("Received null network event!");
+            return;
+        }
+
         log.info("Received network event from Kafka: {}", event.getEventId());
         storageService.storeEvent(event);
     }
@@ -30,6 +33,11 @@ public class EventConsumer {
         groupId = "soc-backend"
     )
     public void consumeEndpointEvent(UnifiedEvent event) {
+        if (event == null) {
+            log.error("Received null endpoint event!");
+            return;
+        }
+
         log.info("Received endpoint event from Kafka: {}", event.getEventId());
         storageService.storeEvent(event);
     }
@@ -39,6 +47,11 @@ public class EventConsumer {
         groupId = "soc-backend"
     )
     public void consumeAlert(UnifiedEvent event) {
+        if (event == null) {
+            log.error("Received null alert event!");
+            return;
+        }
+
         log.info("Received alert from Kafka: {}", event.getEventId());
         storageService.storeEvent(event);
     }

@@ -22,7 +22,7 @@ services:
     ports:
       - "5432:5432"
     environment:
-      POSTGRES_DB: soc_db
+      POSTGRES_DB: soc_db1
       POSTGRES_USER: soc
       POSTGRES_PASSWORD: soc123
 

@@ -1,6 +1,6 @@
 package com.soc.backend_core.controller;
 
-import com.soc.backend_core.model.AlertMessage;
+import com.soc.backend_core.Entities.domain.AlertMessage;
 import com.soc.backend_core.service.SoarService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.MessageMapping;

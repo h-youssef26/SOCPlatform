@@ -1,4 +1,4 @@
-package com.soc.backend_core.model;
+package com.soc.backend_core.Entities.domain;
 
 import java.time.Instant;
 

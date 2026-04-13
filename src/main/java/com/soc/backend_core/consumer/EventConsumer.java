@@ -1,6 +1,6 @@
 package com.soc.backend_core.consumer;
 
-import com.soc.backend_core.model.UnifiedEvent;
+import com.soc.backend_core.Entities.domain.UnifiedEvent;
 import com.soc.backend_core.service.EventStorageService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

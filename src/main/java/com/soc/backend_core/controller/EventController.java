@@ -3,7 +3,7 @@ package com.soc.backend_core.controller;
 import com.soc.backend_core.dto.EndpointEventRequest;
 import com.soc.backend_core.dto.LoginEventRequest;
 import com.soc.backend_core.dto.NetworkEventRequest;
-import com.soc.backend_core.model.UnifiedEvent;
+import com.soc.backend_core.Entities.domain.UnifiedEvent;
 import com.soc.backend_core.producer.EventProducer;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

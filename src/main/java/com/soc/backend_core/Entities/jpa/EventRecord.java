@@ -1,50 +1,38 @@
-package com.soc.backend_core.model;
+package com.soc.backend_core.Entities.jpa;
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.elasticsearch.annotations.Document;
-import org.springframework.data.elasticsearch.annotations.Field;
-import org.springframework.data.elasticsearch.annotations.FieldType;
-
+import jakarta.persistence.*;
 import java.time.Instant;
-import java.util.Map;
 
-@Document(indexName = "soc-events")
-public class EventDocument {
+@Entity
+@Table(name = "events")
+public class EventRecord {
 
     @Id
     private String eventId;
 
-    @Field(type = FieldType.Keyword)
+    @Column(nullable = false)
     private String deviceId;
 
-    @Field(type = FieldType.Keyword)
+    @Column(nullable = false)
     private String eventType;
 
-    @Field(type = FieldType.Keyword)
     private String sourceIp;
-
-    @Field(type = FieldType.Keyword)
     private String destinationIp;
-
-    @Field(type = FieldType.Keyword)
     private String process;
 
-    @Field(type = FieldType.Keyword)
+    @Column(name = "username")
     private String user;
 
-    @Field(type = FieldType.Keyword)
+    @Column(nullable = false)
     private String severity;
 
-    @Field(type = FieldType.Keyword)
+    @Column(nullable = false)
     private String source;
 
-    @Field(type = FieldType.Date)
+    @Column(nullable = false)
     private Instant timestamp;
 
-    @Field(type = FieldType.Object)
-    private Map<String, Object> raw;
-
-    public EventDocument() {}
+    public EventRecord() {}
 
     public static Builder builder() { return new Builder(); }
 
@@ -58,20 +46,11 @@ public class EventDocument {
     public String getSeverity() { return severity; }
     public String getSource() { return source; }
     public Instant getTimestamp() { return timestamp; }
-    public Map<String, Object> getRaw() { return raw; }
 
     public static class Builder {
-        private String eventId;
-        private String deviceId;
-        private String eventType;
-        private String sourceIp;
-        private String destinationIp;
-        private String process;
-        private String user;
-        private String severity;
-        private String source;
+        private String eventId, deviceId, eventType, sourceIp;
+        private String destinationIp, process, user, severity, source;
         private Instant timestamp;
-        private Map<String, Object> raw;
 
         public Builder eventId(String v) { this.eventId = v; return this; }
         public Builder deviceId(String v) { this.deviceId = v; return this; }
@@ -83,16 +62,15 @@ public class EventDocument {
         public Builder severity(String v) { this.severity = v; return this; }
         public Builder source(String v) { this.source = v; return this; }
         public Builder timestamp(Instant v) { this.timestamp = v; return this; }
-        public Builder raw(Map<String, Object> v) { this.raw = v; return this; }
 
-        public EventDocument build() {
-            EventDocument d = new EventDocument();
-            d.eventId = eventId; d.deviceId = deviceId;
-            d.eventType = eventType; d.sourceIp = sourceIp;
-            d.destinationIp = destinationIp; d.process = process;
-            d.user = user; d.severity = severity;
-            d.source = source; d.timestamp = timestamp; d.raw = raw;
-            return d;
+        public EventRecord build() {
+            EventRecord r = new EventRecord();
+            r.eventId = eventId; r.deviceId = deviceId;
+            r.eventType = eventType; r.sourceIp = sourceIp;
+            r.destinationIp = destinationIp; r.process = process;
+            r.user = user; r.severity = severity;
+            r.source = source; r.timestamp = timestamp;
+            return r;
         }
     }
 }

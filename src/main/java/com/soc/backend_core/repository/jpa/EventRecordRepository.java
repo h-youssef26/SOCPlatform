@@ -1,6 +1,6 @@
-package com.soc.backend_core.repository;
+package com.soc.backend_core.repository.jpa;
 
-import com.soc.backend_core.model.EventRecord;
+import com.soc.backend_core.Entities.jpa.EventRecord;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

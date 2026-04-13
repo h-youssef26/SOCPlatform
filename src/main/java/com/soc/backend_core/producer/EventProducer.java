@@ -1,12 +1,10 @@
 package com.soc.backend_core.producer;
 
-import com.soc.backend_core.model.UnifiedEvent;
+import com.soc.backend_core.Entities.domain.UnifiedEvent;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.kafka.core.KafkaTemplate;
 import org.springframework.stereotype.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Slf4j
 @Service

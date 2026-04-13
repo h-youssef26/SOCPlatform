@@ -1,7 +1,7 @@
 package com.soc.backend_core.service;
 
-import com.soc.backend_core.model.AlertMessage;
-import com.soc.backend_core.model.SoarCommand;
+import com.soc.backend_core.Entities.domain.AlertMessage;
+import com.soc.backend_core.Entities.domain.SoarCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;

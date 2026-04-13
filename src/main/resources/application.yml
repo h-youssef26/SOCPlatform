@@ -25,7 +25,7 @@ spring:
 
   # PostgreSQL Configuration
   datasource:
-    url: jdbc:postgresql://localhost:5432/soc_db
+    url: jdbc:postgresql://localhost:5432/soc_db1
     username: soc
     password: soc123
     driver-class-name: org.postgresql.Driver

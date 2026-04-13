@@ -1,0 +1,40 @@
+###
+POST http://localhost:8080/api/events/network
+Content-Type: application/json
+
+{
+  "deviceId": "device-1",
+  "eventType": "port_scan",
+  "srcIp": "192.168.1.10",
+  "destIp": "192.168.1.20",
+  "raw": {
+    "port": 22,
+    "protocol": "TCP"
+  }
+}
+
+
+###
+POST http://localhost:8080/api/events/endpoint
+Content-Type: application/json
+
+{
+  "deviceId": "device-2",
+  "eventType": "process_start",
+  "process": "chrome.exe",
+  "user": "heba",
+  "raw": {}
+}
+
+###
+
+POST http://localhost:8080/api/events/login
+Content-Type: application/json
+
+{
+  "deviceId": "device-3",
+  "user": "heba",
+  "sourceIp": "10.0.0.5",
+  "failed": true
+}
+

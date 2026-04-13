@@ -1,9 +1,9 @@
 package com.soc.backend_core.service;
 
-import com.soc.backend_core.model.EventDocument;
-import com.soc.backend_core.model.EventRecord;
-import com.soc.backend_core.repository.EventDocumentRepository;
-import com.soc.backend_core.repository.EventRecordRepository;
+import com.soc.backend_core.Entities.elastic.EventDocument;
+import com.soc.backend_core.Entities.jpa.EventRecord;
+import com.soc.backend_core.repository.elastic.EventDocumentRepository;
+import com.soc.backend_core.repository.jpa.EventRecordRepository;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;

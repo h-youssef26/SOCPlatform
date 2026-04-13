@@ -1,10 +1,10 @@
 package com.soc.backend_core.service;
 
-import com.soc.backend_core.model.EventDocument;
-import com.soc.backend_core.model.EventRecord;
-import com.soc.backend_core.model.UnifiedEvent;
-import com.soc.backend_core.repository.EventDocumentRepository;
-import com.soc.backend_core.repository.EventRecordRepository;
+import com.soc.backend_core.Entities.elastic.EventDocument;
+import com.soc.backend_core.Entities.jpa.EventRecord;
+import com.soc.backend_core.Entities.domain.UnifiedEvent;
+import com.soc.backend_core.repository.elastic.EventDocumentRepository;
+import com.soc.backend_core.repository.jpa.EventRecordRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

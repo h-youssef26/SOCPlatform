@@ -20,7 +20,7 @@ import org.springframework.kafka.core.ProducerFactory;
 import org.springframework.kafka.support.serializer.JsonDeserializer;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 
-import com.soc.backend_core.model.UnifiedEvent;
+import com.soc.backend_core.Entities.domain.UnifiedEvent;
 
 @Configuration
 public class KafkaConfig {

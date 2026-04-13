@@ -1,6 +1,6 @@
-package com.soc.backend_core.repository;
+package com.soc.backend_core.repository.elastic;
 
-import com.soc.backend_core.model.EventDocument;
+import com.soc.backend_core.Entities.elastic.EventDocument;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 

@@ -1,7 +1,6 @@
 package com.soc.backend_core.controller;
 
-import com.soc.backend_core.model.EventDocument;
-import com.soc.backend_core.model.EventRecord;
+import com.soc.backend_core.Entities.elastic.EventDocument;
 import com.soc.backend_core.service.EventQueryService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

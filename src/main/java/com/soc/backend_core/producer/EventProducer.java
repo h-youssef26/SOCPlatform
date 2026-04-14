@@ -32,4 +32,10 @@ public class EventProducer {
         kafkaTemplate.send("events.alerts", event.getEventId(), event);
         log.info("Alert sent to Kafka: {}", event.getEventId());
     }
+
+    public void sendLoginEvent(UnifiedEvent event) {
+        kafkaTemplate.send("events.login", event.getEventId(), event);
+        log.info("Login event sent to Kafka: {}", event.getEventId());
+    }
+
 }

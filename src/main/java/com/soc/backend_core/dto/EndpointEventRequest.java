@@ -4,22 +4,25 @@ import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 import java.util.Map;
 
+import jakarta.validation.constraints.NotNull;
+
+
 @Data
 public class EndpointEventRequest {
 
-    @NotBlank
+    @NotBlank(message = "deviceId is required")
     private String deviceId;
 
-    @NotBlank
+    @NotBlank(message = "eventType is required")
     private String eventType;
 
+    @NotBlank(message = "process is required")
     private String process;
+
+    @NotBlank(message = "user is required")
     private String user;
+
+    @NotNull(message = "raw payload is required")
     private Map<String, Object> raw;
 
-    public String getDeviceId() { return deviceId; }
-    public String getEventType() { return eventType; }
-    public String getProcess() { return process; }
-    public String getUser() { return user; }
-    public java.util.Map<String, Object> getRaw() { return raw; }
 }

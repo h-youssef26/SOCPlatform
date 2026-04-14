@@ -2,23 +2,21 @@ package com.soc.backend_core.dto;
 
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
-import java.util.Map;
+import com.soc.backend_core.validation.ValidIp;
+
 
 @Data
 public class NetworkEventRequest {
 
-    @NotBlank
+    @NotBlank(message = "deviceId is required")
     private String deviceId;
 
-    @NotBlank
+    @NotBlank(message = "eventType is required")
     private String eventType;
 
+    @ValidIp
     private String srcIp;
+
+    @ValidIp
     private String destIp;
-    private Map<String, Object> raw;
-    public String getDeviceId() { return deviceId; }
-public String getEventType() { return eventType; }
-public String getSrcIp() { return srcIp; }
-public String getDestIp() { return destIp; }
-public java.util.Map<String, Object> getRaw() { return raw; }
 }

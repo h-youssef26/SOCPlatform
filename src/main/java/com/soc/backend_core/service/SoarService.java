@@ -6,163 +6,139 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
-
+import com.soc.backend_core.mapper.SoarCommandMapper;
+import com.soc.backend_core.repository.jpa.SoarCommandRepository;
+import lombok.RequiredArgsConstructor;
 import java.time.Instant;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 
-
-/**
- * SOAR service responsible for executing security automation actions
- * such as killing processes, blocking IPs, and isolating hosts.
- * Also sends real-time alerts to dashboard via WebSocket.
- */
-
 @Service
+@RequiredArgsConstructor
 public class SoarService {
 
-    private static final Logger log =
-            LoggerFactory.getLogger(SoarService.class);
+    private static final Logger log = LoggerFactory.getLogger(SoarService.class);
 
-    // Stores all commands in memory
-    private final Map<String, SoarCommand> commandStore =
-            new ConcurrentHashMap<>();
-
-    // Used to push alerts to Dashboard via WebSocket
+    private final SoarCommandRepository commandRepository; // ← replaces the Map
+    private final SoarCommandMapper     commandMapper;
     private final SimpMessagingTemplate messagingTemplate;
 
-    public SoarService(SimpMessagingTemplate messagingTemplate) {
-        this.messagingTemplate = messagingTemplate;
-    }
-
-    // ─── Kill Process ────────────────────────────────────────────
-    /**
-     * Executes process termination command on target device
-     * and sends alert to dashboard.
-     */
-
+    // ── Kill Process ──────────────────────────────────────────────
     public SoarCommand killProcess(String deviceId,
                                    String targetProcess,
                                    String triggeredBy) {
-        log.info("SOAR: Kill process [{}] on device [{}]",
-                targetProcess, deviceId);
+        validate(deviceId, triggeredBy);
+        if (targetProcess == null || targetProcess.isBlank())
+            throw new IllegalArgumentException(
+                    "targetProcess is required for KILL_PROCESS");
 
-        SoarCommand command = SoarCommand.builder()
-                .commandId(UUID.randomUUID().toString())
-                .commandType("KILL_PROCESS")
-                .deviceId(deviceId)
-                .targetProcess(targetProcess)
-                .triggeredBy(triggeredBy)
-                .status("SENT")
-                .createdAt(Instant.now())
-                .build();
+        SoarCommand command = buildCommand(
+                "KILL_PROCESS", deviceId, targetProcess, null, triggeredBy);
 
-        commandStore.put(command.getCommandId(), command);
-
-        pushAlertToDashboard(AlertMessage.builder()
-                .alertId(UUID.randomUUID().toString())
-                .type("COMMAND_EXECUTED")
-                .severity("HIGH")
-                .deviceId(deviceId)
-                .message("Process killed: " + targetProcess)
-                .commandType("KILL_PROCESS")
-                .timestamp(Instant.now())
-                .build());
+        persist(command);
+        pushAlertToDashboard(buildAlert(
+                "COMMAND_EXECUTED", "HIGH", deviceId,
+                "Process killed: " + targetProcess, "KILL_PROCESS"));
 
         return command;
     }
 
-    // ─── Block IP ────────────────────────────────────────────────
-    /**
-     * Blocks an IP address on target device
-     * and sends alert to dashboard.
-     */
-
+    // ── Block IP ──────────────────────────────────────────────────
     public SoarCommand blockIp(String deviceId,
                                String targetIp,
                                String triggeredBy) {
-        log.info("SOAR: Block IP [{}] on device [{}]",
-                targetIp, deviceId);
+        validate(deviceId, triggeredBy);
+        if (targetIp == null || targetIp.isBlank())
+            throw new IllegalArgumentException(
+                    "targetIp is required for BLOCK_IP");
 
-        SoarCommand command = SoarCommand.builder()
-                .commandId(UUID.randomUUID().toString())
-                .commandType("BLOCK_IP")
-                .deviceId(deviceId)
-                .targetIp(targetIp)
-                .triggeredBy(triggeredBy)
-                .status("SENT")
-                .createdAt(Instant.now())
-                .build();
+        SoarCommand command = buildCommand(
+                "BLOCK_IP", deviceId, null, targetIp, triggeredBy);
 
-        commandStore.put(command.getCommandId(), command);
-
-        pushAlertToDashboard(AlertMessage.builder()
-                .alertId(UUID.randomUUID().toString())
-                .type("COMMAND_EXECUTED")
-                .severity("HIGH")
-                .deviceId(deviceId)
-                .message("IP blocked: " + targetIp)
-                .commandType("BLOCK_IP")
-                .timestamp(Instant.now())
-                .build());
+        persist(command);
+        pushAlertToDashboard(buildAlert(
+                "COMMAND_EXECUTED", "HIGH", deviceId,
+                "IP blocked: " + targetIp, "BLOCK_IP"));
 
         return command;
     }
 
-    // ─── Isolate Host ─────────────────────────────────────────────
-    /**
-     * Isolates a host from network and triggers alert notification.
-     */
+    // ── Isolate Host ──────────────────────────────────────────────
+    public SoarCommand isolateHost(String deviceId, String triggeredBy) {
+        validate(deviceId, triggeredBy);
 
-    public SoarCommand isolateHost(String deviceId,
-                                   String triggeredBy) {
-        log.info("SOAR: Isolate host [{}]", deviceId);
+        SoarCommand command = buildCommand(
+                "ISOLATE_HOST", deviceId, null, null, triggeredBy);
 
-        SoarCommand command = SoarCommand.builder()
-                .commandId(UUID.randomUUID().toString())
-                .commandType("ISOLATE_HOST")
-                .deviceId(deviceId)
-                .triggeredBy(triggeredBy)
-                .status("SENT")
-                .createdAt(Instant.now())
-                .build();
-
-        commandStore.put(command.getCommandId(), command);
-
-        pushAlertToDashboard(AlertMessage.builder()
-                .alertId(UUID.randomUUID().toString())
-                .type("COMMAND_EXECUTED")
-                .severity("CRITICAL")
-                .deviceId(deviceId)
-                .message("Host isolated: " + deviceId)
-                .commandType("ISOLATE_HOST")
-                .timestamp(Instant.now())
-                .build());
+        persist(command);
+        pushAlertToDashboard(buildAlert(
+                "COMMAND_EXECUTED", "CRITICAL", deviceId,
+                "Host isolated: " + deviceId, "ISOLATE_HOST"));
 
         return command;
     }
 
-    // ─── Get All Commands ─────────────────────────────────────────
-    /**
-     * Returns all executed SOAR commands stored in memory.
-     */
-
+    // ── Queries ───────────────────────────────────────────────────
     public List<SoarCommand> getAllCommands() {
-        return new ArrayList<>(commandStore.values());
+        return commandRepository.findAll()
+                .stream()
+                .map(commandMapper::toDomain)
+                .toList();
     }
 
-    // ─── Push Alert to Dashboard ──────────────────────────────────
-    /**
-     * Sends real-time alert message to WebSocket dashboard.
-     *
-     * @param alert alert message
-     */
+    public Map<String, Object> getStats() {
+        List<SoarCommand> commands = getAllCommands();
+        return Map.of(
+                "totalCommands",    commands.size(),
+                "killProcessCount", commands.stream().filter(c -> "KILL_PROCESS" .equals(c.getCommandType())).count(),
+                "blockIpCount",     commands.stream().filter(c -> "BLOCK_IP"     .equals(c.getCommandType())).count(),
+                "isolateHostCount", commands.stream().filter(c -> "ISOLATE_HOST" .equals(c.getCommandType())).count()
+        );
+    }
 
+    // ── WebSocket ─────────────────────────────────────────────────
     public void pushAlertToDashboard(AlertMessage alert) {
         log.info("Pushing alert to Dashboard: {}", alert.getMessage());
         messagingTemplate.convertAndSend("/topic/alerts", alert);
+    }
+
+    // ── Private helpers ───────────────────────────────────────────
+    private void validate(String deviceId, String triggeredBy) {
+        if (deviceId    == null || deviceId   .isBlank())
+            throw new IllegalArgumentException("deviceId is required");
+        if (triggeredBy == null || triggeredBy.isBlank())
+            throw new IllegalArgumentException("triggeredBy is required");
+    }
+
+    private SoarCommand buildCommand(String type, String deviceId,
+                                     String process, String ip,
+                                     String triggeredBy) {
+        return SoarCommand.builder()
+                .commandId(UUID.randomUUID().toString())
+                .commandType(type)
+                .deviceId(deviceId)
+                .targetProcess(process)
+                .targetIp(ip)
+                .triggeredBy(triggeredBy)
+                .status("SENT")
+                .createdAt(Instant.now())
+                .build();
+    }
+
+    private void persist(SoarCommand command) {
+        commandRepository.save(commandMapper.toRecord(command));
+        log.info("SOAR [{}] persisted: commandId={}", command.getCommandType(),
+                command.getCommandId());
+    }
+
+    private AlertMessage buildAlert(String type, String severity,
+                                    String deviceId, String message,
+                                    String commandType) {
+        return AlertMessage.builder()
+                .alertId(UUID.randomUUID().toString())
+                .type(type).severity(severity)
+                .deviceId(deviceId).message(message)
+                .commandType(commandType).timestamp(Instant.now())
+                .build();
     }
 }

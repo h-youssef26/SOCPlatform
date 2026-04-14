@@ -17,7 +17,6 @@ import org.springframework.stereotype.Component;
  * - Endpoint events
  * - Alert events
  */
-
 @Slf4j
 @Component
 @RequiredArgsConstructor
@@ -25,68 +24,37 @@ public class EventConsumer {
 
     private final EventStorageService storageService;
 
-
-    /**
-     * Consumes network events from Kafka topic "events.network"
-     * and stores them in the system.
-     *
-     * @param event the incoming network event
-     */
-
-    @KafkaListener(
-        topics = "events.network",
-        groupId = "soc-backend"
-    )
+    @KafkaListener(topics = "events.network", groupId = "soc-backend")
     public void consumeNetworkEvent(UnifiedEvent event) {
-        if (event == null) {
-            log.error("Received null network event!");
-            return;
-        }
-
-        log.info("Received network event from Kafka: {}", event.getEventId());
-        storageService.storeEvent(event);
+        handle(event, "network");
     }
 
-    /**
-     * Consumes endpoint events from Kafka topic "events.endpoint"
-     * and stores them into the system via storage service.
-     *
-     * @param event incoming endpoint security event
-     */
-
-    @KafkaListener(
-        topics = "events.endpoint",
-        groupId = "soc-backend"
-    )
+    @KafkaListener(topics = "events.endpoint", groupId = "soc-backend")
     public void consumeEndpointEvent(UnifiedEvent event) {
-        if (event == null) {
-            log.error("Received null endpoint event!");
-            return;
-        }
-
-        log.info("Received endpoint event from Kafka: {}", event.getEventId());
-        storageService.storeEvent(event);
+        handle(event, "endpoint");
     }
 
-    /**
-     * Consumes alert events from Kafka topic "events.alerts"
-     * and stores them for further processing and logging.
-     *
-     * @param event incoming alert event
-     */
-
-
-    @KafkaListener(
-        topics = "events.alerts",
-        groupId = "soc-backend"
-    )
+    @KafkaListener(topics = "events.alerts", groupId = "soc-backend")
     public void consumeAlert(UnifiedEvent event) {
+        handle(event, "alert");
+    }
+
+    private void handle(UnifiedEvent event, String source) {
         if (event == null) {
-            log.error("Received null alert event!");
+            log.error("Received null {} event", source);
             return;
         }
 
-        log.info("Received alert from Kafka: {}", event.getEventId());
+        log.info("[Kafka:{}] eventId={}", source, event.getEventId());
+
         storageService.storeEvent(event);
     }
+
+
+    @KafkaListener(topics = "events.login", groupId = "soc-backend")
+    public void consumeLoginEvent(UnifiedEvent event) {
+        handle(event, "login");
+    }
+
+
 }

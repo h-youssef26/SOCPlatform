@@ -6,8 +6,9 @@ import com.soc.backend_core.Entities.domain.SoarCommand;
 import com.soc.backend_core.service.SoarService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
+import jakarta.validation.Valid;
 import java.time.Instant;
 import java.util.List;
 import java.util.Map;
@@ -19,6 +20,7 @@ import java.util.UUID;
  * and routes them to Kafka for processing in the SOC pipeline.
  */
 
+@Validated
 @RestController
 @RequestMapping("/api/soar")
 @Slf4j
@@ -41,7 +43,7 @@ public class SoarController {
 
     @PostMapping("/kill-process")
     public ResponseEntity<SoarCommand> killProcess(
-            @RequestBody SoarCommandRequest request) {
+            @Valid @RequestBody SoarCommandRequest request) {
 
         log.info("Received kill-process command for device: {}",
                 request.getDeviceId());
@@ -66,7 +68,7 @@ public class SoarController {
 
     @PostMapping("/block-ip")
     public ResponseEntity<SoarCommand> blockIp(
-            @RequestBody SoarCommandRequest request) {
+            @Valid @RequestBody SoarCommandRequest request) {
 
         log.info("Received block-ip command for device: {}",
                 request.getDeviceId());
@@ -90,7 +92,7 @@ public class SoarController {
 
     @PostMapping("/isolate")
     public ResponseEntity<SoarCommand> isolateHost(
-            @RequestBody SoarCommandRequest request) {
+            @Valid @RequestBody SoarCommandRequest request) {
 
         log.info("Received isolate command for device: {}",
                 request.getDeviceId());
@@ -147,26 +149,6 @@ public class SoarController {
 
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getStats() {
-
-        List<SoarCommand> commands = soarService.getAllCommands();
-
-        long killCount = commands.stream()
-                .filter(c -> c.getCommandType().equals("KILL_PROCESS"))
-                .count();
-
-        long blockCount = commands.stream()
-                .filter(c -> c.getCommandType().equals("BLOCK_IP"))
-                .count();
-
-        long isolateCount = commands.stream()
-                .filter(c -> c.getCommandType().equals("ISOLATE_HOST"))
-                .count();
-
-        return ResponseEntity.ok(Map.of(
-                "totalCommands", commands.size(),
-                "killProcessCount", killCount,
-                "blockIpCount", blockCount,
-                "isolateHostCount", isolateCount
-        ));
+        return ResponseEntity.ok(soarService.getStats());
     }
 }

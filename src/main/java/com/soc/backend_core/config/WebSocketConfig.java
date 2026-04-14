@@ -1,4 +1,4 @@
-package com.soc.backend_core;
+package com.soc.backend_core.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.messaging.simp.config.MessageBrokerRegistry;

@@ -1,21 +1,22 @@
 package com.soc.backend_core.dto;
 
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
+import com.soc.backend_core.validation.ValidIp;
+
 
 @Data
 public class LoginEventRequest {
 
-    @NotBlank
+    @NotBlank(message = "deviceId is required")
     private String deviceId;
 
-    @NotBlank
+    @NotBlank(message = "user is required")
     private String user;
 
+    @ValidIp
     private String sourceIp;
+
     private boolean failed;
-    public String getDeviceId() { return deviceId; }
-    public String getUser() { return user; }
-    public String getSourceIp() { return sourceIp; }
-    public boolean isFailed() { return failed; }
 }

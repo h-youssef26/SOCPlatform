@@ -5,14 +5,13 @@ import com.soc.backend_core.dto.LoginEventRequest;
 import com.soc.backend_core.dto.NetworkEventRequest;
 import com.soc.backend_core.Entities.domain.UnifiedEvent;
 import com.soc.backend_core.producer.EventProducer;
+import com.soc.backend_core.translator.EventTranslator;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.annotation.Validated;
 
-import java.time.Instant;
-import java.util.UUID;
 
 
 /**
@@ -20,93 +19,42 @@ import java.util.UUID;
  * and publishes them to Kafka for processing.
  */
 
-
-@Slf4j
+@Validated
 @RestController
 @RequestMapping("/api/events")
 @RequiredArgsConstructor
 public class EventController {
 
     private final EventProducer producer;
-
-    /**
-     * Receives network security events and sends them to Kafka.
-     *
-     * @param request network event payload
-     * @return confirmation message
-     */
+    private final EventTranslator translator;
 
     @PostMapping("/network")
     public ResponseEntity<String> receiveNetworkEvent(
             @RequestBody @Valid NetworkEventRequest request) {
 
-        UnifiedEvent event = UnifiedEvent.builder()
-                .eventId(UUID.randomUUID().toString())
-                .deviceId(request.getDeviceId())
-                .eventType(request.getEventType())
-                .sourceIp(request.getSrcIp())
-                .destinationIp(request.getDestIp())
-                .severity("MEDIUM")
-                .source("NDR")
-                .timestamp(Instant.now())
-                .raw(request.getRaw())
-                .build();
-
+        UnifiedEvent event = translator.fromNetwork(request);
         producer.sendNetworkEvent(event);
+
         return ResponseEntity.ok("Network event accepted");
     }
-
-    /**
-     * Receives endpoint security event and publishes it to Kafka.
-     *
-     * @param request endpoint event payload
-     * @return confirmation message
-     */
-
 
     @PostMapping("/endpoint")
     public ResponseEntity<String> receiveEndpointEvent(
             @RequestBody @Valid EndpointEventRequest request) {
 
-        UnifiedEvent event = UnifiedEvent.builder()
-                .eventId(UUID.randomUUID().toString())
-                .deviceId(request.getDeviceId())
-                .eventType(request.getEventType())
-                .process(request.getProcess())
-                .user(request.getUser())
-                .severity("LOW")
-                .source("EDR")
-                .timestamp(Instant.now())
-                .raw(request.getRaw())
-                .build();
-
+        UnifiedEvent event = translator.fromEndpoint(request);
         producer.sendEndpointEvent(event);
+
         return ResponseEntity.ok("Endpoint event accepted");
     }
-
-    /**
-     * Receives login event, detects severity, and sends it to Kafka.
-     *
-     * @param request login event payload
-     * @return confirmation message
-     */
 
     @PostMapping("/login")
     public ResponseEntity<String> receiveLoginEvent(
             @RequestBody @Valid LoginEventRequest request) {
 
-        UnifiedEvent event = UnifiedEvent.builder()
-                .eventId(UUID.randomUUID().toString())
-                .deviceId(request.getDeviceId())
-                .eventType("login_attempt")
-                .user(request.getUser())
-                .sourceIp(request.getSourceIp())
-                .severity(request.isFailed() ? "HIGH" : "LOW")
-                .source("EDR")
-                .timestamp(Instant.now())
-                .build();
+        UnifiedEvent event = translator.fromLogin(request);
+        producer.sendLoginEvent(event);
 
-        producer.sendEndpointEvent(event);
         return ResponseEntity.ok("Login event accepted");
     }
 }

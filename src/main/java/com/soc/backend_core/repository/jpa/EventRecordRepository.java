@@ -7,10 +7,6 @@ import org.springframework.stereotype.Repository;
 import java.util.List;
 
 @Repository
-public interface EventRecordRepository
-        extends JpaRepository<EventRecord, String> {
+public interface EventRecordRepository extends JpaRepository<EventRecord, String> {
 
-    List<EventRecord> findByDeviceId(String deviceId);
-    List<EventRecord> findBySeverity(String severity);
-    List<EventRecord> findBySource(String source);
 }

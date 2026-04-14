@@ -14,4 +14,7 @@ public interface EventDocumentRepository
     List<EventDocument> findBySeverity(String severity);
     List<EventDocument> findBySource(String source);
     List<EventDocument> findByEventType(String eventType);
+
+    long countBySeverity(String severity);
+    long countBySource(String source);
 }

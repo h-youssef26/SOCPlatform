@@ -2,14 +2,18 @@ package com.soc.backend_core.controller;
 
 import com.soc.backend_core.Entities.elastic.EventDocument;
 import com.soc.backend_core.service.EventQueryService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.ResponseEntity;
+import jakarta.validation.constraints.NotNull;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-import java.util.Map;
 
+
+
+import java.util.List;
 
 /**
  * Provides APIs for querying stored security events
@@ -18,6 +22,7 @@ import java.util.Map;
 
 @Slf4j
 @RestController
+@Validated
 @RequestMapping("/api/query")
 @RequiredArgsConstructor
 public class EventQueryController {
@@ -37,6 +42,8 @@ public class EventQueryController {
     }
 
 
+
+
     /**
      * Retrieves events filtered by device ID.
      *
@@ -46,7 +53,7 @@ public class EventQueryController {
     // Get events by device
     @GetMapping("/events/device/{deviceId}")
     public ResponseEntity<List<EventDocument>> getByDevice(
-            @PathVariable String deviceId) {
+            @PathVariable @NotBlank String deviceId) {
         return ResponseEntity.ok(queryService.getEventsByDevice(deviceId));
     }
 
@@ -59,7 +66,7 @@ public class EventQueryController {
     // Get events by severity
     @GetMapping("/events/severity/{severity}")
     public ResponseEntity<List<EventDocument>> getBySeverity(
-            @PathVariable String severity) {
+            @PathVariable @NotBlank String severity) {
         return ResponseEntity.ok(queryService.getEventsBySeverity(severity));
     }
 
@@ -72,7 +79,7 @@ public class EventQueryController {
     // Get events by source
     @GetMapping("/events/source/{source}")
     public ResponseEntity<List<EventDocument>> getBySource(
-            @PathVariable String source) {
+            @PathVariable @NotBlank String source) {
         return ResponseEntity.ok(queryService.getEventsBySource(source));
     }
 
@@ -85,7 +92,7 @@ public class EventQueryController {
     // Get events by type
     @GetMapping("/events/type/{eventType}")
     public ResponseEntity<List<EventDocument>> getByType(
-            @PathVariable String eventType) {
+            @PathVariable @NotBlank String eventType) {
         return ResponseEntity.ok(queryService.getEventsByType(eventType));
     }
 
@@ -96,21 +103,7 @@ public class EventQueryController {
 
     // Get stats summary
     @GetMapping("/stats")
-    public ResponseEntity<Map<String, Object>> getStats() {
-        long total = queryService.getTotalEventCount();
-        long high = queryService.getEventsBySeverity("HIGH").size();
-        long medium = queryService.getEventsBySeverity("MEDIUM").size();
-        long low = queryService.getEventsBySeverity("LOW").size();
-        long ndr = queryService.getEventsBySource("NDR").size();
-        long edr = queryService.getEventsBySource("EDR").size();
-
-        return ResponseEntity.ok(Map.of(
-                "totalEvents", total,
-                "highSeverity", high,
-                "mediumSeverity", medium,
-                "lowSeverity", low,
-                "ndrEvents", ndr,
-                "edrEvents", edr
-        ));
+    public ResponseEntity<?> getStats() {
+        return ResponseEntity.ok(queryService.getStats());
     }
 }
